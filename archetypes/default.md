@@ -2,7 +2,7 @@
 title: "{{ replace .File.ContentBaseName "-" " " | title }}"
 date: {{ .Date }}
 author: ""
-description: ""
+cover: ""          # 썸네일 이미지 (선택). 예: "/images/foo.jpg" 또는 전체 URL. 비우면 자동 생성.
 tags: []
 draft: true
 ---

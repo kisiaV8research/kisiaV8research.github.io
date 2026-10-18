@@ -1,0 +1,19 @@
+{{/* 썸네일 카드. context: dict "page" <페이지> "featured" <bool> */}}
+{{- $p := .page }}
+{{- $featured := .featured }}
+{{- $img := "" }}
+{{- with $p.Params.cover }}{{ $img = . }}{{ end }}
+{{- if not $img }}{{ with $p.Resources.ByType "image" }}{{ $img = (index . 0).RelPermalink }}{{ end }}{{ end }}
+<a class="card{{ if $featured }} card-featured{{ end }}" href="{{ $p.RelPermalink }}">
+  <div class="card-thumb{{ if not $img }} card-thumb-ph{{ end }}"{{ with $img }} style="background-image:url('{{ . }}')"{{ end }}>
+    {{- if not $img }}<span class="card-thumb-mark">{{ substr $p.Title 0 1 }}</span>{{ end }}
+  </div>
+  <div class="card-body">
+    <div class="card-meta">
+      <time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ $p.Date.Format "2006.01.02" }}</time>
+      {{- with $p.Params.author }}<span class="dot">·</span><span>{{ . }}</span>{{ end }}
+      {{- with $p.CurrentSection }}<span class="card-from">{{ .Title }}</span>{{ end }}
+    </div>
+    <h3 class="card-title">{{ $p.Title }}</h3>
+  </div>
+</a>

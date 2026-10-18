@@ -39,9 +39,8 @@ git push -u origin main
 - `title` → 블로그 제목
 
 > 멤버 폴더는 이미 팀원 이름으로 세팅돼 있습니다:
-> `lee-seungwon`(이승원·팀장) / `cha-eunhyeok`(차은혁) / `kim-minjeong`(김민정) / `lim-suhee`(임수희)
-> 각 폴더의 `_index.md`에서 `title`·`role` 을 바꿀 수 있고, 각 폴더 안의 `example.md`(초안)를
-> 복사해 새 글을 시작하면 편합니다.
+> `lee-seungwon`(이승원) / `cha-eunhyeok`(차은혁) / `kim-minjeong`(김민정) / `lim-suhee`(임수희)
+> 각 폴더 안의 `example.md`(초안)를 복사해 새 글을 시작하면 편합니다.
 
 ---
 
@@ -61,7 +60,7 @@ git push -u origin main
 title: "글 제목"
 date: 2026-10-18
 author: "내 이름"
-description: "한 줄 요약 (목록/검색에 표시됩니다)"
+cover: ""
 tags: ["태그1", "태그2"]
 ---
 
@@ -70,6 +69,10 @@ tags: ["태그1", "태그2"]
 
 > 맨 위 `---` 사이 부분을 **front matter**라고 합니다. 제목·날짜·태그 같은 글 정보입니다.
 > `draft: true` 를 넣으면 공개되지 않는 초안으로 저장됩니다. 완성되면 그 줄을 지우세요.
+>
+> **썸네일 이미지**: `cover` 에 이미지 경로를 넣으면 홈 카드의 썸네일로 쓰입니다.
+> 예) `cover: "/images/my-pic.jpg"` (이미지는 `static/images/` 폴더에 두거나, 전체 URL 사용).
+> 비워 두면 글 제목 첫 글자로 깔끔한 기본 썸네일이 자동 생성됩니다.
 
 ### 방법 B. 내 컴퓨터에서 쓰기 (미리보기 가능)
 Hugo가 설치돼 있으면(아래 3번) 명령어로 새 글 틀을 만들 수 있습니다.

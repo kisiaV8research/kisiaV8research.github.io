@@ -129,21 +129,48 @@ main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh;
 .section-more { font-size: .85rem; color: var(--faint); }
 .section-more:hover { color: var(--accent); }
 
-/* ── 홈: 최근 글 피드 (한 줄 = 날짜·제목·구분) ───────────── */
-.feed { display: flex; flex-direction: column; }
-.feed-item {
-  display: grid; grid-template-columns: 6.5rem 1fr auto; align-items: baseline; gap: 1rem;
-  padding: .95rem .25rem; border-bottom: 1px solid var(--line);
-  transition: background .15s ease;
+/* ── 홈: 썸네일 카드 그리드 ─────────────────────────────── */
+.cards {
+  max-width: var(--maxw-wide); margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
 }
-.feed-item:hover { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); }
-.feed-date { font-family: var(--font-mono); font-size: .8rem; color: var(--faint); letter-spacing: -0.01em; }
-.feed-title { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.015em; line-height: 1.35; }
-.feed-item:hover .feed-title { color: var(--accent); }
-.feed-from { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+.card {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: #fff;
+  transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
+}
+.card:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px -18px rgba(28, 27, 25, .35);
+}
+.card-thumb {
+  aspect-ratio: 16 / 10; background-size: cover; background-position: center; background-color: var(--code-bg);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.card-thumb-ph { background: linear-gradient(145deg, var(--accent-soft), #fff); }
+.card-thumb-mark {
+  font-family: var(--font-mono); font-size: 2.6rem; font-weight: 700;
+  color: color-mix(in srgb, var(--accent) 55%, var(--faint)); opacity: .7;
+}
+.card-body { padding: 1rem 1.15rem 1.25rem; display: flex; flex-direction: column; gap: .4rem; }
+.card-meta {
+  font-size: .76rem; color: var(--faint); display: flex; align-items: center; gap: .4rem; flex-wrap: wrap;
+}
+.card-meta time { font-family: var(--font-mono); letter-spacing: -0.01em; }
+.card-from {
+  margin-left: auto; background: var(--code-bg); color: var(--muted);
+  padding: .08rem .5rem; border-radius: 999px; font-size: .72rem;
+}
+.card-title { font-size: 1.12rem; line-height: 1.38; margin: 0; letter-spacing: -0.015em; font-weight: 600; }
+.card:hover .card-title { color: var(--accent); }
 
-/* 홈 멤버 카드는 4열로 더 촘촘하게 (명시도를 높여 기본 2열을 확실히 덮음) */
-.member-grid.member-grid-home { grid-template-columns: repeat(4, 1fr); }
+/* 가장 최근 글 = 가로형 큰 카드 */
+.card-featured { grid-column: 1 / -1; flex-direction: row; }
+.card-featured .card-thumb { aspect-ratio: auto; width: 56%; min-height: 300px; flex: none; }
+.card-featured .card-body { flex: 1; padding: 2rem 2.2rem; justify-content: center; gap: .6rem; }
+.card-featured .card-thumb-mark { font-size: 4rem; }
+.card-featured .card-title { font-size: 1.95rem; line-height: 1.2; }
 
 /* ── 글 목록 ────────────────────────────────────────────── */
 .post-list { max-width: var(--maxw); margin: 0 auto; }
@@ -294,11 +321,21 @@ main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh;
   .home-desc { font-size: 1.05rem; }
   .post-title { font-size: 1.7rem; }
   .member-grid { grid-template-columns: 1fr; }
-  .member-grid.member-grid-home { grid-template-columns: repeat(2, 1fr); }
   main.container { padding-top: 2.25rem; }
 
-  .hero { margin-bottom: 3rem; }
-  .feed-item { grid-template-columns: 1fr; gap: .2rem; padding: .85rem .25rem; }
-  .feed-date { order: -1; }
-  .feed-from { display: none; }
+  .hero { margin-bottom: 2.5rem; }
+  .cards { grid-template-columns: 1fr; gap: 1.2rem; }
+  .card-featured { flex-direction: column; }
+  .card-featured .card-thumb { width: 100%; min-height: 0; aspect-ratio: 16 / 10; }
+  .card-featured .card-body { padding: 1rem 1.15rem 1.25rem; }
+  .card-featured .card-title { font-size: 1.4rem; }
+}
+
+/* 태블릿: 카드 2열 */
+@media (min-width: 641px) and (max-width: 900px) {
+  .cards { grid-template-columns: repeat(2, 1fr); }
+  .card-featured { flex-direction: column; grid-column: 1 / -1; }
+  .card-featured .card-thumb { width: 100%; min-height: 0; aspect-ratio: 16 / 9; }
+  .card-featured .card-body { padding: 1.4rem 1.6rem; }
+  .card-featured .card-title { font-size: 1.6rem; }
 }

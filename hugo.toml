@@ -59,7 +59,7 @@ timeZone = "Asia/Seoul"
 
 # ── 사이트 전역 변수 ─────────────────────────────────────────
 [params]
-  description = "네 명이 함께 쌓아가는 공부와 연구 기록."
+  description = ""
   author = "Research Team"
   # 푸터에 넣을 GitHub Organization 주소 (선택)
   github = "https://github.com/kisiaV8research"
