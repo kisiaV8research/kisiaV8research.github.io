@@ -1,0 +1,34 @@
+{{ define "main" }}
+<div class="page-head">
+  <h1>{{ .Title }}</h1>
+  {{- with .Description }}<p class="page-desc">{{ . }}</p>{{ end }}
+  {{- with .Content }}<div class="page-body">{{ . }}</div>{{ end }}
+</div>
+
+{{/* 하위 섹션(예: /members 아래의 멤버 폴더)이 있으면 카드로 먼저 표시 */}}
+{{- with .Sections }}
+<div class="member-grid">
+  {{- range . }}
+  <a class="member-card" href="{{ .RelPermalink }}">
+    <span class="member-name">{{ .Title }}</span>
+    {{- with .Params.role }}<span class="member-role">{{ . }}</span>{{ end }}
+    <span class="member-count">글 {{ len .RegularPages }}개</span>
+  </a>
+  {{- end }}
+</div>
+{{- end }}
+
+{{/* 이 섹션에 직접 속한 글 목록 (최신순, 초안 제외) */}}
+{{- $pages := where .RegularPages "Params.draft" "!=" true }}
+{{- $paginator := .Paginate $pages }}
+{{- if $paginator.Pages }}
+<div class="post-list">
+  {{- range $paginator.Pages }}
+    {{ partial "post-item.html" . }}
+  {{- end }}
+</div>
+{{ partial "pagination.html" . }}
+{{- else if not .Sections }}
+<p class="empty-note">아직 글이 없습니다. 첫 글을 작성해 보세요.</p>
+{{- end }}
+{{ end }}

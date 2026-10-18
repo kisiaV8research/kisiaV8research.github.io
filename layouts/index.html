@@ -1,0 +1,41 @@
+{{ define "main" }}
+<section class="home-intro">
+  <h1 class="home-title">{{ .Site.Title }}</h1>
+  {{- with .Site.Params.description }}<p class="home-desc">{{ . }}</p>{{ end }}
+  {{- with .Content }}<div class="home-body">{{ . }}</div>{{ end }}
+</section>
+
+{{- $posts := where (where .Site.RegularPages "Section" "posts") "Params.draft" "!=" true }}
+{{- if $posts }}
+<section class="home-section">
+  <div class="section-head">
+    <h2>팀 글</h2>
+    <a class="section-more" href="{{ "/posts/" | relURL }}">전체 보기 →</a>
+  </div>
+  <div class="post-list">
+    {{- range first 5 $posts }}
+      {{ partial "post-item.html" . }}
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+
+{{- $members := .Site.GetPage "/members" }}
+{{- with $members }}
+<section class="home-section">
+  <div class="section-head">
+    <h2>멤버</h2>
+    <a class="section-more" href="{{ .RelPermalink }}">전체 보기 →</a>
+  </div>
+  <div class="member-grid">
+    {{- range .Sections }}
+    <a class="member-card" href="{{ .RelPermalink }}">
+      <span class="member-name">{{ .Title }}</span>
+      {{- with .Params.role }}<span class="member-role">{{ . }}</span>{{ end }}
+      <span class="member-count">글 {{ len .RegularPages }}개</span>
+    </a>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+{{ end }}

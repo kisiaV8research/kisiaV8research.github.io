@@ -1,0 +1,11 @@
+{{ define "main" }}
+<div class="page-head">
+  <h1>{{ .Title }}</h1>
+  <p class="page-desc">글에 붙은 태그 모음입니다.</p>
+</div>
+<div class="tag-cloud">
+  {{- range .Data.Terms.Alphabetical }}
+  <a href="{{ .Page.RelPermalink }}" class="tag tag-lg">{{ .Page.Title }}<span class="tag-count">{{ .Count }}</span></a>
+  {{- end }}
+</div>
+{{ end }}

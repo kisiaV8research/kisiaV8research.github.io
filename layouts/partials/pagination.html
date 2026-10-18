@@ -1,0 +1,8 @@
+{{- $p := .Paginator }}
+{{- if gt $p.TotalPages 1 }}
+<nav class="pagination" aria-label="페이지 넘기기">
+  {{- if $p.HasPrev }}<a href="{{ $p.Prev.URL }}">← 이전</a>{{ else }}<span class="disabled">← 이전</span>{{ end }}
+  <span class="page-of">{{ $p.PageNumber }} / {{ $p.TotalPages }}</span>
+  {{- if $p.HasNext }}<a href="{{ $p.Next.URL }}">다음 →</a>{{ else }}<span class="disabled">다음 →</span>{{ end }}
+</nav>
+{{- end }}
