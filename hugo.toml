@@ -69,7 +69,8 @@ timeZone = "Asia/Seoul"
   # 큰 제목 위에 작게 뜨는 라벨
   eyebrow = "KISIA · V8 RESEARCH ARCHIVE"
   # 제목 아래 큼직하게 뜨는 키워드들 (문장 대신 단어). 팀에 맞게 바꾸세요.
-  keywords = ["AI", "Security", "Systems", "Research", "Archive", "2026"]
+  # 비워두면(= []) 키워드 칩이 표시되지 않습니다.
+  keywords = []
 
 [taxonomies]
   tag = "tags"
