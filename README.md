@@ -38,8 +38,10 @@ git push -u origin main
 - `baseURL` → `https://<조직이름>.github.io/`
 - `title` → 블로그 제목
 
-> 멤버 폴더 이름/이름도 바꾸고 싶다면 `content/members/` 아래 `member1`~`member4` 폴더명과
-> 각 `_index.md`의 `title`, `role` 을 본인에 맞게 수정하세요.
+> 멤버 폴더는 이미 팀원 이름으로 세팅돼 있습니다:
+> `lee-seungwon`(이승원·팀장) / `cha-eunhyeok`(차은혁) / `kim-minjeong`(김민정) / `lim-suhee`(임수희)
+> 각 폴더의 `_index.md`에서 `title`·`role` 을 바꿀 수 있고, 각 폴더 안의 `example.md`(초안)를
+> 복사해 새 글을 시작하면 편합니다.
 
 ---
 
@@ -76,8 +78,8 @@ Hugo가 설치돼 있으면(아래 3번) 명령어로 새 글 틀을 만들 수 
 # 팀 글
 hugo new posts/내-글-제목.md
 
-# 내 개인 글
-hugo new members/member1/내-글-제목.md
+# 내 개인 글 (본인 폴더에)
+hugo new members/lee-seungwon/내-글-제목.md
 ```
 
 작성 후 저장소에 push하면 배포됩니다.
@@ -118,10 +120,10 @@ TEAM_Blog/
 ├── content/
 │   ├── posts/             # ★ 팀 공식 자료
 │   ├── members/           # ★ 개인 공부 기록
-│   │   ├── member1/       #   팀원별 폴더
-│   │   ├── member2/
-│   │   ├── member3/
-│   │   └── member4/
+│   │   ├── lee-seungwon/  #   이승원 (팀장)
+│   │   ├── cha-eunhyeok/  #   차은혁
+│   │   ├── kim-minjeong/  #   김민정
+│   │   └── lim-suhee/     #   임수희
 │   └── about/             # 소개 페이지
 ├── layouts/               # 디자인(템플릿) — 보통 건드릴 일 없음
 ├── assets/css/main.css    # 색·폰트·간격 (디자인 수정 시 여기)

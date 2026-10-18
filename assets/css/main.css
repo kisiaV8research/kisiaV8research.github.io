@@ -95,13 +95,31 @@ main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh;
 .page-desc { color: var(--muted); margin: 0; }
 .page-body { color: var(--muted); margin-top: .75rem; }
 
-/* ── 홈 ─────────────────────────────────────────────────── */
-.home-intro { max-width: var(--maxw); margin: 1rem auto 3.5rem; }
-.home-title { font-size: 2.6rem; line-height: 1.1; margin: 0 0 .75rem; letter-spacing: -0.03em; }
-.home-desc { font-size: 1.2rem; color: var(--muted); margin: 0; line-height: 1.6; }
-.home-body { margin-top: 1.25rem; color: var(--fg); }
+/* ── 홈: 히어로 (단어 중심) ─────────────────────────────── */
+.hero {
+  max-width: var(--maxw-wide); margin: 1.5rem auto 4.5rem;
+  padding-bottom: 2.5rem; border-bottom: 1px solid var(--line);
+}
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: .72rem; letter-spacing: .28em; text-transform: uppercase;
+  color: var(--faint); margin: 0 0 1.4rem; display: flex; align-items: center; gap: .7rem;
+}
+.hero-eyebrow::before { content: ""; width: 1.6rem; height: 1px; background: var(--accent); display: inline-block; }
+.hero-title {
+  font-size: clamp(2.8rem, 8vw, 5rem); line-height: .98; margin: 0;
+  letter-spacing: -0.045em; font-weight: 800;
+}
+.hero-keywords { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1.9rem; }
+.kw {
+  font-size: 1.02rem; letter-spacing: -0.01em; color: var(--muted);
+  padding: .32rem .85rem; border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; transition: color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.kw:nth-child(3n+1) { color: var(--fg); }
+.hero:hover .kw { border-color: color-mix(in srgb, var(--accent) 22%, var(--line)); }
 
-.home-section { max-width: var(--maxw); margin: 0 auto 3rem; }
+.home-section { max-width: var(--maxw-wide); margin: 0 auto 3.25rem; }
 .section-head {
   display: flex; align-items: baseline; justify-content: space-between;
   border-bottom: 1px solid var(--line);
@@ -110,6 +128,22 @@ main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh;
 .section-head h2 { font-size: .8rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 0; font-weight: 600; }
 .section-more { font-size: .85rem; color: var(--faint); }
 .section-more:hover { color: var(--accent); }
+
+/* ── 홈: 최근 글 피드 (한 줄 = 날짜·제목·구분) ───────────── */
+.feed { display: flex; flex-direction: column; }
+.feed-item {
+  display: grid; grid-template-columns: 6.5rem 1fr auto; align-items: baseline; gap: 1rem;
+  padding: .95rem .25rem; border-bottom: 1px solid var(--line);
+  transition: background .15s ease;
+}
+.feed-item:hover { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); }
+.feed-date { font-family: var(--font-mono); font-size: .8rem; color: var(--faint); letter-spacing: -0.01em; }
+.feed-title { font-size: 1.12rem; font-weight: 600; letter-spacing: -0.015em; line-height: 1.35; }
+.feed-item:hover .feed-title { color: var(--accent); }
+.feed-from { font-size: .78rem; color: var(--muted); white-space: nowrap; }
+
+/* 홈 멤버 카드는 4열로 더 촘촘하게 (명시도를 높여 기본 2열을 확실히 덮음) */
+.member-grid.member-grid-home { grid-template-columns: repeat(4, 1fr); }
 
 /* ── 글 목록 ────────────────────────────────────────────── */
 .post-list { max-width: var(--maxw); margin: 0 auto; }
@@ -260,5 +294,11 @@ main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh;
   .home-desc { font-size: 1.05rem; }
   .post-title { font-size: 1.7rem; }
   .member-grid { grid-template-columns: 1fr; }
+  .member-grid.member-grid-home { grid-template-columns: repeat(2, 1fr); }
   main.container { padding-top: 2.25rem; }
+
+  .hero { margin-bottom: 3rem; }
+  .feed-item { grid-template-columns: 1fr; gap: .2rem; padding: .85rem .25rem; }
+  .feed-date { order: -1; }
+  .feed-from { display: none; }
 }
