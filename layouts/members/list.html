@@ -1,0 +1,18 @@
+{{ define "main" }}
+<div class="page-head">
+  <h1>{{ .Title }}</h1>
+</div>
+
+{{/* 이 섹션(및 하위 멤버 폴더) 전체의 개인 글을 썸네일 카드로 모아 보여줍니다. */}}
+{{- $posts := where .RegularPagesRecursive "Params.draft" "!=" true }}
+{{- $posts = $posts.ByDate.Reverse }}
+{{- if $posts }}
+<section class="cards">
+  {{- range $i, $p := $posts }}
+    {{ partial "card.html" (dict "page" $p "featured" (eq $i 0) "index" $i) }}
+  {{- end }}
+</section>
+{{- else }}
+<p class="empty-note">아직 개인 글이 없습니다. 각자 폴더에 글을 올리면 여기에 모입니다.</p>
+{{- end }}
+{{ end }}

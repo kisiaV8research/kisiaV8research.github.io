@@ -78,14 +78,20 @@ a { color: inherit; text-decoration: none; }
 }
 .site-nav { display: flex; gap: 1.35rem; }
 .site-nav a {
+  position: relative;
   color: var(--muted);
   font-size: .95rem;
-  transition: color .15s ease;
+  transition: color .18s ease;
   padding: .2rem 0;
-  border-bottom: 1.5px solid transparent;
+}
+.site-nav a::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1.5px;
+  background: var(--accent); transform: scaleX(0); transform-origin: left;
+  transition: transform .24s cubic-bezier(.4, 0, .2, 1);
 }
 .site-nav a:hover { color: var(--fg); }
-.site-nav a.is-active { color: var(--fg); border-bottom-color: var(--accent); }
+.site-nav a:hover::after, .site-nav a.is-active::after { transform: scaleX(1); }
+.site-nav a.is-active { color: var(--fg); }
 
 /* ── 메인 영역 공통 ─────────────────────────────────────── */
 main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh; }
@@ -311,6 +317,48 @@ main.container { padding-top: 3.25rem; padding-bottom: 4.5rem; min-height: 60vh;
 .notfound p { color: var(--muted); }
 .btn { display: inline-block; margin-top: 1rem; padding: .6rem 1.2rem; border: 1px solid var(--line); border-radius: 8px; transition: border-color .15s ease; }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ── 애니메이션 (심플한 진입 효과) ───────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* 페이지가 뜰 때 본문이 부드럽게 나타남 */
+main.container { animation: fade-in .45s ease both; }
+
+/* 히어로 요소가 아래에서 위로 */
+.hero-eyebrow { animation: fade-up .6s ease both; }
+.hero-title   { animation: fade-up .6s .05s ease both; }
+
+/* 목록/글 제목 영역 */
+.page-head, .post-header { animation: fade-up .55s ease both; }
+
+/* 카드가 순차적으로(스태거) 등장 — 지연은 각 카드 인라인 style로 */
+.card { animation: fade-up .5s ease both; }
+
+/* 카드 썸네일 호버 줌 */
+.card-thumb { transition: transform .45s cubic-bezier(.4, 0, .2, 1); }
+.card:hover .card-thumb { transform: scale(1.045); }
+
+/* 브랜드(로고) 살짝 반응 */
+.brand { transition: opacity .18s ease; }
+.brand:hover { opacity: .65; }
+
+/* 모션을 줄이도록 설정한 사용자에겐 애니메이션 비활성화 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: .001ms !important;
+  }
+  .card:hover { transform: none; }
+  .card:hover .card-thumb { transform: none; }
+}
 
 /* ── 반응형 ─────────────────────────────────────────────── */
 @media (max-width: 640px) {

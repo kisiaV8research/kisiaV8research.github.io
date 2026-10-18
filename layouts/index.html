@@ -4,12 +4,12 @@
   <h1 class="hero-title">{{ .Site.Title }}</h1>
 </section>
 
-{{- $feed := where .Site.RegularPages "Section" "in" (slice "posts" "members") }}
+{{- $feed := where .Site.RegularPages "Section" "posts" }}
 {{- $feed = $feed.ByDate.Reverse }}
 {{- if $feed }}
 <section class="cards">
   {{- range $i, $p := $feed }}
-    {{ partial "card.html" (dict "page" $p "featured" (eq $i 0)) }}
+    {{ partial "card.html" (dict "page" $p "featured" (eq $i 0) "index" $i) }}
   {{- end }}
 </section>
 {{- else }}

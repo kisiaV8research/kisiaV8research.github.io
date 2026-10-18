@@ -1,10 +1,11 @@
-{{/* 썸네일 카드. context: dict "page" <페이지> "featured" <bool> */}}
+{{/* 썸네일 카드. context: dict "page" <페이지> "featured" <bool> "index" <int> */}}
 {{- $p := .page }}
 {{- $featured := .featured }}
+{{- $i := .index | default 0 }}
 {{- $img := "" }}
 {{- with $p.Params.cover }}{{ $img = . }}{{ end }}
 {{- if not $img }}{{ with $p.Resources.ByType "image" }}{{ $img = (index . 0).RelPermalink }}{{ end }}{{ end }}
-<a class="card{{ if $featured }} card-featured{{ end }}" href="{{ $p.RelPermalink }}">
+<a class="card{{ if $featured }} card-featured{{ end }}" href="{{ $p.RelPermalink }}" style="animation-delay:{{ mul $i 55 }}ms">
   <div class="card-thumb{{ if not $img }} card-thumb-ph{{ end }}"{{ with $img }} style="background-image:url('{{ . }}')"{{ end }}>
     {{- if not $img }}<span class="card-thumb-mark">{{ substr $p.Title 0 1 }}</span>{{ end }}
   </div>
