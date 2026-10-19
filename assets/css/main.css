@@ -244,6 +244,10 @@ main.container { padding-top: 3.25rem; padding-bottom: 5rem; min-height: 62vh; }
 .post-content pre { background: var(--code-bg); border: 1px solid var(--line); padding: 1rem 1.1rem; border-radius: 10px; overflow-x: auto; font-size: .9rem; line-height: 1.6; margin: 1.5rem 0; }
 .post-content pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; word-break: normal; }
 
+/* Mermaid 다이어그램: 코드박스 스타일 제거하고 가운데 정렬 */
+.post-content pre.mermaid { background: none; border: none; padding: .5rem 0; margin: 1.5rem 0; text-align: center; overflow-x: auto; line-height: normal; }
+.post-content pre.mermaid:not([data-processed="true"]) { color: transparent; }  /* 렌더 전 원문 깜빡임 방지 */
+
 .post-content table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: .95rem; }
 .post-content th, .post-content td { border: 1px solid var(--line); padding: .55rem .75rem; text-align: left; }
 .post-content th { background: var(--bg-elev2); font-weight: 600; }

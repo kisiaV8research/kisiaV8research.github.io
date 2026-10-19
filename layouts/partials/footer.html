@@ -7,3 +7,26 @@
     </span>
   </div>
 </footer>
+
+{{- if .Store.Get "hasMermaid" }}
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      darkMode: true,
+      background: '#0b0d11',
+      mainBkg: '#14181e',
+      primaryColor: '#14181e',
+      primaryBorderColor: '#ff5340',
+      primaryTextColor: '#e7e9ec',
+      secondaryColor: '#191e25',
+      tertiaryColor: '#191e25',
+      lineColor: '#8a919c',
+      fontFamily: 'JetBrains Mono, monospace',
+      fontSize: '14px'
+    }
+  });
+</script>
+{{- end }}

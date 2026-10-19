@@ -1,0 +1,5 @@
+{{/* ```mermaid 코드블록을 다이어그램으로 렌더링 */}}
+<pre class="mermaid">
+{{- .Inner | htmlEscape | safeHTML -}}
+</pre>
+{{- .Page.Store.Set "hasMermaid" true -}}
