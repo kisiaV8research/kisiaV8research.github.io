@@ -8,4 +8,6 @@ hugo_stats.json
 .DS_Store
 Thumbs.db
 .idea/
-.vscode/
+# VS Code: 팀 공용 설정(이미지 붙여넣기 등)만 공유, 나머지는 무시
+.vscode/*
+!.vscode/settings.json

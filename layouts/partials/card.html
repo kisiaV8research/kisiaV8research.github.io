@@ -3,7 +3,9 @@
 {{- $featured := .featured }}
 {{- $i := .index | default 0 }}
 {{- $img := "" }}
-{{- with $p.Params.cover }}{{ $img = . }}{{ end }}
+{{- with $p.Params.cover }}
+  {{- with $p.Resources.GetMatch . }}{{ $img = .RelPermalink }}{{ else }}{{ $img = . }}{{ end }}
+{{- end }}
 {{- if not $img }}{{ with $p.Resources.ByType "image" }}{{ $img = (index . 0).RelPermalink }}{{ end }}{{ end }}
 <a class="card{{ if $featured }} card-featured{{ end }}" href="{{ $p.RelPermalink }}" style="animation-delay:{{ mul $i 55 }}ms">
   <div class="card-thumb{{ if not $img }} card-thumb-ph{{ end }}"{{ with $img }} style="background-image:url('{{ . }}')"{{ end }}>

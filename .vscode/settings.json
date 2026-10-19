@@ -1,0 +1,14 @@
+{
+  // ── 이미지 붙여넣기 자동화 ───────────────────────────────
+  // 글(폴더/index.md) 안에서 이미지를 복사해 붙여넣으면(Ctrl+V)
+  //  → 그 글의 images/ 폴더에 "글폴더이름_타임스탬프.확장자" 로 자동 저장되고
+  //  → 마크다운 링크가 자동으로 삽입됩니다.
+  // 예) posts/v8/index.md 에 붙여넣기 → posts/v8/images/v8_1739....png
+  "markdown.copyFiles.destination": {
+    "/content/**/index.md": "images/${documentDirName}_${unixTime}.${fileExtName}"
+  },
+  "markdown.copyFiles.overwriteBehavior": "nameIncrementally",
+  "markdown.editor.filePaste.copyIntoWorkspace": "mediaFiles",
+  "markdown.editor.drop.copyIntoWorkspace": "mediaFiles",
+  "files.eol": "\n"
+}
