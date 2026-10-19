@@ -30,7 +30,7 @@ timeZone = "Asia/Seoul"
       title = true
   [markup.highlight]
     noClasses = true          # 코드 하이라이트를 인라인 스타일로 (별도 설정 불필요)
-    style = "github"
+    style = "github-dark"
     tabWidth = 2
     guessSyntax = true
   [markup.tableOfContents]
@@ -63,7 +63,7 @@ timeZone = "Asia/Seoul"
 
   # ── 메인(첫 화면) 꾸미기 ───────────────────────────────
   # 큰 제목 위에 작게 뜨는 라벨
-  eyebrow = "KISIA · V8 RESEARCH ARCHIVE"
+  eyebrow = "// KISIA_V8 // RESEARCH_ARCHIVE"
   # 제목 아래 큼직하게 뜨는 키워드들 (문장 대신 단어). 팀에 맞게 바꾸세요.
   # 비워두면(= []) 키워드 칩이 표시되지 않습니다.
   keywords = []

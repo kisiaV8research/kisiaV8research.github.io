@@ -1,6 +1,6 @@
 ---
 title: "소개"
-layout: "page"
+layout: "about"
 description: "이 블로그와 팀에 대한 소개입니다."
 ---
 

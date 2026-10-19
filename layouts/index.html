@@ -1,7 +1,7 @@
 {{ define "main" }}
 <section class="hero hero-slim">
   {{- with .Site.Params.eyebrow }}<p class="hero-eyebrow">{{ . }}</p>{{ end }}
-  <h1 class="hero-title">{{ .Site.Title }}</h1>
+  <h1 class="hero-title">{{ .Site.Title }}<span class="cursor" aria-hidden="true"></span></h1>
 </section>
 
 {{- $feed := where .Site.RegularPages "Section" "posts" }}
