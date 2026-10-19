@@ -22,7 +22,7 @@ Chrome과 Node.js 등에서 사용되며, JavaScript 표준인 ECMAScript를 구
 
 V8은 JavaScript 소스 코드를 컴파일하고 실행한다. JavaScript 객체에 필요한 메모리를 할당하기도 하며, 사용하지 않는 객체는 Garbage Collection을 통해 정리한다.
 
-![alt text](image.png)
+![alt text](images/image.png)
 
 JavaScript 코드는 가장 먼저 **Ignition Bytecode**로 컴파일된다.
 
