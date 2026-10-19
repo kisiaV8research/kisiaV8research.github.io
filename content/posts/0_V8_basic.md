@@ -6,7 +6,7 @@ cover: ""
 tags: ["v8", "d8"]
 ---
 
-> 해당 블로그는 한국정보보호산업협회(KISIA)에서 진행된 교육인 "기업수요기반화이트해커양성과정"에서 진행한 프로젝트를 문서화하기 위해 제작되었습니다.
+> 해당 블로그는 한국정보보호산업협회(KISIA)에서 진행된 교육인 "기업수요기반화이트해커양성과정"에서 진행한 프로젝트로, 진행한 내용을 문서화하기 위해 제작되었습니다.
 
 프로그래밍 언어로 작성된 코드는 CPU가 실행 가능한 형태로 변환 되어야한다.
 
@@ -22,6 +22,7 @@ Chrome과 Node.js 등에서 사용되며, JavaScript 표준인 ECMAScript를 구
 
 V8은 JavaScript 소스 코드를 컴파일하고 실행한다. JavaScript 객체에 필요한 메모리를 할당하기도 하며, 사용하지 않는 객체는 Garbage Collection을 통해 정리한다.
 
+![alt text](image.png)
 
 JavaScript 코드는 가장 먼저 **Ignition Bytecode**로 컴파일된다.
 
