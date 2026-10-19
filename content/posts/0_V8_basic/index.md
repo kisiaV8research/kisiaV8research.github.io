@@ -1,5 +1,5 @@
 ---
-title: "V8 basic"
+title: "V8 Basic"
 date: 2026-10-19
 author: "맹트농후작부인프랑소와즈도비네 Team"
 cover: ""
