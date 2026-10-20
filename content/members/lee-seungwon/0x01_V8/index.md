@@ -465,25 +465,36 @@ sha256sum \
 
 ![alt text](images/image-13.png)
 
+139나 Segmentation fault만 안뜨면 된다.
 
+잘 나오는거 같으니 도구를 교체해주자.
 
+```bash
+install -m 0755 \
+  out/host-tools/torque \
+  out/vuln-asan/torque
+```
 
+`install`은 실행 권한을 유지하면서 파일을 복사하고 수정 시간을 갱신한다.
 
+![alt text](images/image-14.png)
 
+해시 검증까지 ㅎㅎ
 
-
-
-
-
-
-
-
-
-
-
-이제 중단되었던 빌드를 이어서 진행하자.
+다시 중단되었던 빌드를 이어서 진행해보자.
 
 ```bash
 /home/ubuntu/depot_tools/autoninja \
   -C out/vuln-asan d8
 ```
+
+![alt text](images/image-15.png)
+
+성공 ㅎㅎ
+
+![alt text](images/image-16.png)
+
+잘 적용된 거 같으니 실행까지 해보자.
+
+## 실행
+
