@@ -12,7 +12,7 @@ tags: ["1-day", "CVE-2020-6507"]
 
 ![alt text](images/image.png)
 
-![alt text](images/image.png)
+![alt text](images/image-1.png)
 
 ubuntu의 경우 설치 후 아무런 설정도 하지 않은 상태이다.
 
@@ -129,7 +129,7 @@ cd /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace
 
 실행하면 `.gclient`라는 텍스트 파일 하나가 생긴다.
 
-![alt text](images/image.png)
+![alt text](images/image-2.png)
 
 내용은 다음과 같다.
 
@@ -229,5 +229,21 @@ gclient sync는 해당 V8 리비전의 DEPS에 기록된 빌드 도구와 하위
 
 - DEPS(dependencies): 특정 버전의 V8을 빌드하기 위한 의존성 목록으로, Python 문법으로 쓰여있다.
 
+## 취약 버전 ASan 빌드
+
+ASan(AddressSanitizer)는 컴파일러(clang/gcc)에 내장된 **메모리 오류 탐지기**이다.
+
+이 녀석이 이용하는 핵심 아이디어는 2가지이다.
+
+1. Shadow memory
+프로그램 메모리 1바이트마다 접근해도 괜찮은지를 기록하는 별도의 맵을 둔다.
+
+실제로는 8바이트당 1바이트 비율로 압축해서 관리하며, 모든 load/store 직전에 해당 맵을 조회한다.
+
+2. Redzone
+할당된 모든 메모리 블록 앞뒤에 독이 칠해진(poisoned) 완충 구역을 끼워 넣는다.
+배열 밖으로 한칸만 넘어가도 레드존을 밟아 트리거 되는 형태이다.
+
+해제된 메모리도 바로 재사용하지 않고 격리(quarantine) 큐에 넣어 독을 칠해둔다. 때문에 use-after-free도 잡아낼 수 있다.
 
 
