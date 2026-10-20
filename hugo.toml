@@ -34,7 +34,7 @@ timeZone = "Asia/Seoul"
     tabWidth = 2
     guessSyntax = true
   [markup.tableOfContents]
-    startLevel = 2
+    startLevel = 1
     endLevel = 3
     ordered = false
 
