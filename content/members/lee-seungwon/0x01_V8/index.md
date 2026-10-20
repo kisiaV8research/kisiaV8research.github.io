@@ -496,5 +496,147 @@ install -m 0755 \
 
 잘 적용된 거 같으니 실행까지 해보자.
 
-## 실행
+### Trouble shooting 5
 
+![alt text](images/image-17.png)
+
+이번에도 Segmentation fault가 뜬다.
+
+ai한테 물어보니 ASan 런타입 시작 단계에서 죽는 것 같다고 하니 조치를 해보자.
+
+```bash
+ls -l \
+  build/linux/debian_sid_amd64-sysroot/lib64/ld-linux-x86-64.so.2
+```
+
+로더의 위치를 확인해서 만약 존재하면,
+
+```bash
+/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib64/ld-linux-x86-64.so.2 \
+  --inhibit-cache \
+  --library-path /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/local/lib/x86_64-linux-gnu \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/out/vuln-asan/d8 \
+  --version
+```
+
+다음과 같이 실행해본다.
+
+![alt text](images/image-18.png)
+
+근데 버전도 뜨고, `d8>` 프롬프트도 뜨는 것으로 봐서는 glibc 2.29 sysroot 로더로 ASan d8이 정상 실행된 것으로 보인다.
+
+일단 `quit();`(또는 Ctrl+D)로 프롬프트를 나와서 smoke test를 해보자.
+
+- smoke test: 가장 기초적인 동작만 빠르게 확인. (일단 켜지는지 봄)
+
+실행할 파일을 간단하게 만들어주자.
+
+```bash
+mkdir -p \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/poc
+
+printf '%s\n' 'print(1 + 1);' \
+  > /home/ubuntu/security-lab/cve/CVE-2020-6507/poc/smoke.js
+```
+
+그리고 한 번 실행해보면?
+
+```bash
+/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib64/ld-linux-x86-64.so.2 \
+  --inhibit-cache \
+  --library-path /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/local/lib/x86_64-linux-gnu \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/out/vuln-asan/d8 \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/poc/smoke.js
+```
+
+오? 잘 실행이 된다.
+
+이렇게 ASan d8의 빌드와 실행을 전부 확인해봤다.
+
+단, Ubuntu 26.04의 호스트 로더로 직접 실행하면 계속 충돌하게 될테니, 앞으로는 sysroot 실행 스크립트를 사용해야될 것 같다. (지금 한 것처럼)
+
+## ASan 전용 실행 스크립트 생성
+
+```bash
+mkdir -p \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/scripts
+
+tee /home/ubuntu/security-lab/cve/CVE-2020-6507/scripts/vuln-asan-d8 >/dev/null <<'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+exec /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib64/ld-linux-x86-64.so.2 \
+  --inhibit-cache \
+  --library-path /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/local/lib/x86_64-linux-gnu \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/out/vuln-asan/d8 \
+  "$@"
+EOF
+
+chmod +x \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/scripts/vuln-asan-d8
+```
+
+스크립트가 잘 돌아가는지 확인해보자.
+
+```bash
+/home/ubuntu/security-lab/cve/CVE-2020-6507/scripts/vuln-asan-d8 \
+  -e 'print(version())'
+
+/home/ubuntu/security-lab/cve/CVE-2020-6507/scripts/vuln-asan-d8 \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/poc/smoke.js
+```
+
+![alt text](images/image-19.png)
+
+버전과 결과값이 잘 나오는 것을 보니 잘 동작하는 것 같다.
+
+## 빌드 정보 기록
+
+```bash
+git rev-parse HEAD \
+  | tee /home/ubuntu/security-lab/cve/CVE-2020-6507/logs/vuln-v8-revision.txt
+
+sha256sum out/vuln-asan/d8 \
+  | tee /home/ubuntu/security-lab/cve/CVE-2020-6507/logs/vuln-asan-d8.sha256
+
+cp out/vuln-asan/args.gn \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/artifacts/vuln-asan-args.gn
+```
+
+## 취약 버전 Debug 빌드
+
+ASan에 이어 취약 버전 Debug도 진행해준다.
+
+```bash
+cd /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8
+
+/home/ubuntu/depot_tools/gn gen out/vuln-debug \
+  --args='is_debug=true is_component_build=false target_cpu="x64" symbol_level=2 dcheck_always_on=true use_lld=false use_gold=false v8_enable_backtrace=true v8_enable_disassembler=true v8_enable_object_print=true'
+
+/home/ubuntu/depot_tools/autoninja \
+  -C out/vuln-debug d8
+```
+
+![alt text](images/image-20.png)
+
+오? 된거 같다.
+
+test랑 sysroot 로더로 검증해보자.
+
+```bash
+test -x out/vuln-debug/d8 \
+  && echo '취약 버전 Debug d8 빌드 성공'
+
+
+/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib64/ld-linux-x86-64.so.2 \
+  --inhibit-cache \
+  --library-path /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/lib/x86_64-linux-gnu:/home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/build/linux/debian_sid_amd64-sysroot/usr/local/lib/x86_64-linux-gnu \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8/out/vuln-debug/d8 \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/poc/smoke.js
+```
+
+![alt text](images/image-21.png)
+
+일단은 이렇게 환경 구축을 완료했다.
+
+처음하는거라 AI가 하라는대로 진행해서 사실 이해가 잘 되지는 않았다. 하지만 앞으로 분석하거나 다른 CVE를 2개 정도 더 분석할건데, 이 과정에서 구축을 왜 이런식으로 했는지를 이해해 나가보려고 한다.
