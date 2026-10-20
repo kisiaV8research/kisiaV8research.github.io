@@ -185,6 +185,23 @@ main.container { padding-top: 3.25rem; padding-bottom: 5rem; min-height: 62vh; }
 .card-featured .card-thumb-mark { font-size: 4rem; }
 .card-featured .card-title { font-size: 1.9rem; line-height: 1.2; }
 
+/* ── 개인 글 대시보드 (멤버별 패널) ─────────────────────── */
+.dashboard { max-width: var(--maxw-wide); margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+.dash-panel { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-elev); padding: 1.1rem 1.25rem; transition: border-color .18s ease; }
+.dash-panel:hover { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
+.dash-head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; border-bottom: 1px solid var(--line); padding-bottom: .55rem; margin-bottom: .35rem; }
+.dash-name { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+.dash-name:hover { color: var(--accent); }
+.dash-count { font-family: var(--font-mono); font-size: .72rem; color: var(--accent); background: var(--accent-soft); border: 1px solid var(--line); padding: .05rem .4rem; border-radius: 999px; flex: none; }
+.dash-posts { list-style: none; margin: 0; padding: 0; }
+.dash-posts a { display: flex; gap: .7rem; align-items: baseline; padding: .4rem 0; }
+.dash-posts li + li a { border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent); }
+.dash-date { font-family: var(--font-mono); font-size: .72rem; color: var(--faint); flex: none; width: 2.7rem; }
+.dash-title { font-size: .93rem; color: var(--fg); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dash-posts a:hover .dash-title { color: var(--accent); }
+.dash-empty { font-family: var(--font-mono); font-size: .82rem; color: var(--faint); margin: .5rem 0 .2rem; }
+.dash-empty::before { content: "// "; color: var(--accent-dim); }
+
 /* ── 태그 ───────────────────────────────────────────────── */
 .tag {
   display: inline-block; font-family: var(--font-mono); font-size: .76rem; color: var(--muted);
@@ -322,6 +339,7 @@ main.container { animation: fade-in .45s ease both; }
 
   .hero { margin-bottom: 2.5rem; }
   .cards { grid-template-columns: 1fr; gap: 1.2rem; }
+  .dashboard { grid-template-columns: 1fr; }
   .card-featured { flex-direction: column; }
   .card-featured .card-thumb { width: 100%; min-height: 0; aspect-ratio: 16 / 10; }
   .card-featured .card-body { padding: 1rem 1.15rem 1.25rem; }

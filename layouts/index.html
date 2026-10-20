@@ -4,15 +4,55 @@
   <h1 class="hero-title">{{ .Site.Title }}<span class="cursor" aria-hidden="true"></span></h1>
 </section>
 
+{{/* ── 팀 글 ───────────────────────────────────────────── */}}
 {{- $feed := where .Site.RegularPages "Section" "posts" }}
 {{- $feed = $feed.ByDate.Reverse }}
-{{- if $feed }}
-<section class="cards">
-  {{- range $i, $p := $feed }}
-    {{ partial "card.html" (dict "page" $p "featured" (eq $i 0) "index" $i) }}
+<section class="home-section">
+  <div class="section-head"><h2>팀 글</h2></div>
+  {{- if $feed }}
+  <div class="cards">
+    {{- range $i, $p := $feed }}
+      {{ partial "card.html" (dict "page" $p "featured" (eq $i 0) "index" $i) }}
+    {{- end }}
+  </div>
+  {{- else }}
+  <p class="empty-note">첫 글을 올리면 여기에 썸네일로 표시됩니다.</p>
   {{- end }}
 </section>
-{{- else }}
-<p class="empty-note">첫 글을 올리면 여기에 썸네일로 표시됩니다.</p>
+
+{{/* ── 개인 글 대시보드 (멤버별) ──────────────────────────── */}}
+{{- with .Site.GetPage "/members" }}
+<section class="home-section">
+  <div class="section-head">
+    <h2>개인 글</h2>
+    <a class="section-more" href="{{ .RelPermalink }}">전체 보기 →</a>
+  </div>
+  <div class="dashboard">
+    {{- range .Sections }}
+    {{- $posts := where .RegularPagesRecursive "Params.draft" "!=" true }}
+    {{- $posts = $posts.ByDate.Reverse }}
+    <div class="dash-panel">
+      <div class="dash-head">
+        <a class="dash-name" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        <span class="dash-count">{{ len $posts }}</span>
+      </div>
+      {{- if $posts }}
+      <ul class="dash-posts">
+        {{- range first 5 $posts }}
+        <li>
+          <a href="{{ .RelPermalink }}">
+            <span class="dash-date">{{ .Date.Format "01.02" }}</span>
+            <span class="dash-title">{{ .Title }}</span>
+          </a>
+        </li>
+        {{- end }}
+      </ul>
+      {{- else }}
+      <p class="dash-empty">아직 글 없음</p>
+      {{- end }}
+    </div>
+    {{- end }}
+  </div>
+</section>
 {{- end }}
 {{ end }}
