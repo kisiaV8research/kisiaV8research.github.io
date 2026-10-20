@@ -1,15 +1,14 @@
 {
   // ── 이미지 붙여넣기 자동화 ───────────────────────────────
   // 글(폴더/index.md) 안에서 이미지를 복사해 붙여넣으면(Ctrl+V)
-  //  → 그 글의 images/ 폴더에 "글폴더이름_원본파일명" 으로 저장되고
-  //  → 마크다운 링크가 자동 삽입됩니다.
-  // 예) posts/v8/index.md 에 붙여넣기 → posts/v8/images/v8_image.png
-  //     (같은 이름이 또 오면 v8_image-1.png, v8_image-2.png ... 로 자동 증가)
+  //  → 그 글의 images/ 폴더에 저장되고
+  //  → 본문에 상대경로 링크 ![](images/파일명) 가 자동 삽입됩니다.
   //
-  // ${documentDirName}=글 폴더 이름, ${fileName}=붙여넣은 이미지 파일명(확장자 포함).
-  // 이 두 변수는 VS Code 1.79부터 모든 버전에서 동작합니다.
+  // 경로는 index.md 기준 "상대경로"로 저장/삽입됩니다.
+  // ${fileName} = 붙여넣은 이미지 파일명(확장자 포함). 같은 이름이 또 오면
+  // image.png → image-1.png → image-2.png 로 자동 증가합니다.
   "markdown.copyFiles.destination": {
-    "/content/**/index.md": "images/${documentDirName}_${fileName}"
+    "/content/**/index.md": "images/${fileName}"
   },
   "markdown.copyFiles.overwriteBehavior": "nameIncrementally",
   "markdown.editor.filePaste.copyIntoWorkspace": "mediaFiles",

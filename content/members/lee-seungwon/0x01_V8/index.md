@@ -10,9 +10,9 @@ tags: ["1-day", "CVE-2020-6507"]
 
 환경 세팅 전, 미리 준비해둔 환경은 다음과 같다.
 
-![alt text](images/c:/Users/m0nk3ygod/Desktop/TEAM_Blog/content/members/lee-seungwon/0x01_V8_image.png)
+![alt text](images/image.png)
 
-![alt text](images/c:/Users/m0nk3ygod/Desktop/TEAM_Blog/content/members/lee-seungwon/0x01_V8_image.png)
+![alt text](images/image.png)
 
 ubuntu의 경우 설치 후 아무런 설정도 하지 않은 상태이다.
 
@@ -129,7 +129,7 @@ cd /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace
 
 실행하면 `.gclient`라는 텍스트 파일 하나가 생긴다.
 
-![alt text](images/c:/Users/m0nk3ygod/Desktop/TEAM_Blog/content/members/lee-seungwon/0x01_V8_image.png)
+![alt text](images/image.png)
 
 내용은 다음과 같다.
 
