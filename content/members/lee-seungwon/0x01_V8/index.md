@@ -1,12 +1,12 @@
 ---
-title: "CVE-2020-6507 Part1"
+title: "CVE-2020-6507 - Part 1"
 date: 2026-10-20
 author: "이승원"
 cover: ""
 tags: ["1-day", "CVE-2020-6507"]
 ---
 
-> 스스로 공부하면서 다시 보기 위해 개인적으로 정리한 글이며, 틀린 부분이 존재할 수 있습니다.
+> 스스로 공부하면서 다시 보기 위해 개인적으로 정리한 글이며, 틀린 부분이 존재할 수 있습니다. ai와 함께 학습한 내용이고, 트러블 슈팅 과정이 들어가 있기 때문에 성공담만 보고 싶으신 분이라면 적절하지 않은 글일 수 있습니다.
 
 환경 세팅 전, 미리 준비해둔 환경은 다음과 같다.
 
@@ -229,6 +229,20 @@ gclient sync는 해당 V8 리비전의 DEPS에 기록된 빌드 도구와 하위
 
 - DEPS(dependencies): 특정 버전의 V8을 빌드하기 위한 의존성 목록으로, Python 문법으로 쓰여있다.
 
+### 리비전 기록
+
+동기화 후 리비전을 기록한다. (추후에 다시 재현할 때 용이)
+
+```bash
+git rev-parse HEAD | tee \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/logs/vuln-v8-revision.txt
+
+git show -s --format=fuller HEAD | tee \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/logs/vuln-v8-commit.txt
+```
+
+![alt text](images/image-3.png)
+
 ## 취약 버전 ASan 빌드
 
 ASan(AddressSanitizer)는 컴파일러(clang/gcc)에 내장된 **메모리 오류 탐지기**이다.
@@ -246,4 +260,230 @@ ASan(AddressSanitizer)는 컴파일러(clang/gcc)에 내장된 **메모리 오�
 
 해제된 메모리도 바로 재사용하지 않고 격리(quarantine) 큐에 넣어 독을 칠해둔다. 때문에 use-after-free도 잡아낼 수 있다.
 
+다음 명령으로 빌드해주자.
 
+```bash
+cd /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8
+
+/home/ubuntu/depot_tools/gn gen out/vuln-asan \
+  --args='is_debug=false is_asan=true is_component_build=false target_cpu="x64" symbol_level=2 v8_enable_backtrace=true v8_enable_disassembler=true v8_enable_object_print=true'
+
+/home/ubuntu/depot_tools/autoninja \
+  -C out/vuln-asan d8
+```
+
+### Trouble shooting 1 (error 127)
+
+![alt text](images/image-4.png)
+
+근데 오류가 떴다.
+
+종료 코드 127은 명령을 찾지 못했다는 뜻으로, 그 뒤의 Ninja 오류는 gn gen 실패로 build.ninja가 생성되지 않았음을 의미한다.
+
+```bash
+sudo apt install -y python-is-python3
+```
+
+python 명령이 없어서 그런 것이니 다음과 같이 설치해주자.
+
+해당 패키지는 별도의 가상환경을 만드는 것이 아니라 `/usr/bin/python`이 python3를 가리키게 한다.
+
+### Trouble shootin 2 (error 255)
+
+![alt text](images/image-5.png)
+
+다시 실행해보니 다른 오류가 떴다.
+
+이번에는 GN 설정은 성공했고, 컴파일도 544단계까지 진행이 되었다.
+
+막힌 지점은 V8에 포함된 2020년 `ld.lld`가 호스트에서 `libxml2.so.2`를 찾지 못해서 발생한 것으로 보인다.
+
+Ubuntu 26.04 버전을 이용중이기에 `libxml.so.2`가 없다. 그래서 강제로 링크 시키면 안되고, 2020년판 `ld.lld` 대신에 Ubuntu의 기본 GNU 링커가 찾도록 만들어주면 된다. (고 내 AI가 그랬음)
+
+![alt text](images/image-6.png)
+
+시스템 링커가 있는건 확인했고, 이제 ASan 설정에서 구형 LLD를 비활성화 해주자.
+
+```bash
+cd /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8
+
+/home/ubuntu/depot_tools/gn gen out/vuln-asan \
+  --args='is_debug=false is_asan=true is_component_build=false target_cpu="x64" symbol_level=2 use_lld=false use_gold=false v8_enable_backtrace=true v8_enable_disassembler=true v8_enable_object_print=true'
+```
+
+그리고 잘 설정되었는지 확인까지 해주자.
+
+```bash
+/home/ubuntu/depot_tools/gn args \
+  out/vuln-asan \
+  --list=use_lld
+
+/home/ubuntu/depot_tools/gn args \
+  out/vuln-asan \
+  --list=use_gold
+```
+
+![alt text](images/image-7.png)
+
+두 설정 모두 Current value가 false인 것을 보니 잘 적용된 것 같다.
+
+### Trouble shooting 3 (error 1)
+
+이번에도 오류가 떴다.
+
+2020년 V8 체크아웃 안에 Jinja2(Python Template Engine)가 `third_party/jinja2`로 딸려 들어왔는데, 이게 V8 빌드 과정에서 코드 생성에 쓰인다. (토치 파일이나 바인딩 코드를 템프릿에서 찍어내는 용도)
+
+근데 이 시절 Jinja2 코드에는 `from collections import Mapping` 이라는 코드가 들어있었는데, 이게 Python 3.3에서 `Mapping` 같은 추상 베이스 클래스들이 `collections.abc`로 옮겨 갔다.
+
+하위 호환을 위해서 `collections`에서도 계속 import되게 별칭을 남겨줬는데, 그게 3.10에서 제거되어서 에러가 난 것이다...
+
+Jinja2를 재설치하는건 조금 과하니, 파일 수정만 해주자.
+
+일단 원본을 백업해주자.
+
+```bash
+cd /home/ubuntu/security-lab/cve/CVE-2020-6507/workspace/v8
+
+cp third_party/jinja2/tests.py \
+  third_party/jinja2/tests.py.cve-2020-6507.bak
+```
+
+이후 Python 3.14 호환 패치를 진행해주자.
+
+```bash
+sed -i \
+  's/^from collections import Mapping$/from collections.abc import Mapping/' \
+  third_party/jinja2/tests.py
+```
+
+수정 되었는지 확인
+
+```bash
+rg -n \
+  '^from collections(\.abc)? import Mapping$' \
+  third_party/jinja2/tests.py
+```
+
+![alt text](images/image-8.png)
+
+해당 변경은 Chromium에 포함된 구형 Jinja2의 실제 `from collections import Mapping` 구문만 수정한다.
+
+![alt text](images/image-9.png)
+
+Jinja2 단독 로딩으로 잘 적용되었음도 확인했으니, 호환 패치한 내용을 기록해두자.
+
+```bash
+git -C third_party/jinja2 diff -- tests.py \
+  | tee /home/ubuntu/security-lab/cve/CVE-2020-6507/artifacts/python314-jinja2-mapping.patch
+```
+
+이 패치는 나중에 취약/수정 환경을 재구성할 때 사용할 수 있다. (안 쓰더라도 뭐 하면 좋으니...)
+
+### Trouble shooting 4 (error 139)
+
+![alt text](images/image-10.png)
+
+이번에도 오류가 떴다...
+
+또 Python 문제는 아닌거 같고, torque 실행 파일 자체가 비정상 종료한 것으로 보인다.
+
+나온 김에 시그널 역연산에 대해 다뤄보자.
+
+#### shell의 종료 코드 규칙
+
+프로세스는 두 가지 방식으로 끝난다.
+
+- 스스로 종료: `exit(0)`, `exit(1)` 같은 값을 반환
+- 시그널에 맞아 죽음: SIGSEGV, SIGABRT 등
+
+shell은 이 둘을 한 바이트짜리 `$?`에 욱여넣어야 해서, 시그널로 죽은 경우 **128 + 시그널 번호**로 표시하는 관례를 쓴다.
+
+```
+139 = 128 + 11   → SIGSEGV
+134 = 128 + 6    → SIGABRT
+130 = 128 + 2    → SIGINT (Ctrl+C)
+```
+
+이제 오류 코드를 다시보자.
+
+![alt text](images/image-11.png)
+
+여기서는 245가 떴다. 어떻게 245가 나온걸까?
+
+파이썬의 `subprocess`는 시그널 사망을 음수로 돌려준다.
+
+- ex. SIGSEGV: `returncode == -11`
+
+`tools/run.py`는 자식을 실행하고 그 값을 그대로 `sys.exit()`에 넘긴다. 근데 종료 코드는 0~255 범위의 한 바이트라, 음수를 넘기면 256으로 감싸진다. (모듈러 연산)
+
+```
+-11 mode 256 = 245
+```
+
+그래서 역연산을 하면?
+
+```
+245 -> 256 - 245 = 11 -> SIGSEGV
+```
+
+가 되는 것이다.
+
+다시 트러블 슈팅으로 돌아와서...
+
+현재 ASan Torque 상태를 보면, 
+
+![alt text](images/image-12.png)
+
+SIGSEGV를 확인할 수 있다.
+
+일단 현재 바이너리를 보관해주자.
+
+```bash
+cp out/vuln-asan/torque \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/artifacts/torque-asan-crashing
+
+sha256sum \
+  /home/ubuntu/security-lab/cve/CVE-2020-6507/artifacts/torque-asan-crashing \
+  | tee /home/ubuntu/security-lab/cve/CVE-2020-6507/logs/torque-asan-crashing.sha256
+```
+
+그리고 ASan만 끈 동일 리비전의 torque를 만들고 컴파일해준다.
+
+```bash
+/home/ubuntu/depot_tools/gn gen out/host-tools \
+  --args='is_debug=false is_asan=false is_component_build=false target_cpu="x64" symbol_level=0 use_lld=false use_gold=false v8_enable_backtrace=true v8_enable_disassembler=true v8_enable_object_print=true'
+
+/home/ubuntu/depot_tools/autoninja \
+  -C out/host-tools torque
+```
+
+그리고 단독 실행 시켜서 잘 돌아가는지 확인해보자.
+
+```bash
+./out/host-tools/torque --help
+```
+
+![alt text](images/image-13.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+이제 중단되었던 빌드를 이어서 진행하자.
+
+```bash
+/home/ubuntu/depot_tools/autoninja \
+  -C out/vuln-asan d8
+```
