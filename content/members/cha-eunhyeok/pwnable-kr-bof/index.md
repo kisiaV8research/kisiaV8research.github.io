@@ -10,7 +10,7 @@ tags: ["pwnable", "ctf", "stack", "buffer-overflow"]
 
 ## 문제의 목표
 
-![](images/Pasted%20image%2020261021041444.png)
+![alt text](images/Pasted%20image%2020261021041444.png)
 
 `bof`는 입력을 길게 넣어 스택에 있는 `key` 값을 바꾸는 문제다. 목표는 `key`에 `0xcafebabe`를 넣어 셸을 실행하는 조건을 만족시키는 것이다.
 
@@ -62,10 +62,10 @@ if (key == 0xcafebabe)
 낮은 주소
           ┌────────────────────────────┐
 입력 시작  │ overflowme[32]             │
-    ↓     │ 입력을 저장하는 버퍼          │
+    ↓     │ 입력을 저장하는 버퍼         │
           ├────────────────────────────┤
-    ↓     │ 중간 스택 영역               │
-          │ 다른 값과 정렬 공간 등        │
+    ↓     │ 중간 스택 영역              │
+          │ 다른 값과 정렬 공간 등       │
           ├────────────────────────────┤
     ↓     │ key (4바이트)               │
           └────────────────────────────┘
@@ -76,7 +76,7 @@ if (key == 0xcafebabe)
 
 `A`의 바이트 값은 `0x41`이다. `key` 위치까지 `A`를 채우면 기존 값이 `0x41414141`로 바뀔 수 있다. 목표는 그 위치에 `A` 대신 `0xcafebabe`의 바이트를 넣는 것이다.
 
-![](images/Pasted%20image%2020261021041221.png)
+![alt text](images/Pasted%20image%2020261021041221.png)
 checksec을 통한 확인 카나리도 있는게 확인 되었다.
 ## GDB로 확인하기
 
@@ -90,7 +90,7 @@ gdb ./bof
 disas func
 ```
 
-![](images/Pasted%20image%2020261021041706.png)
+![alt text](images/Pasted%20image%2020261021041706.png)
 
 입력이 저장된 상태의 스택을 보기 위해 `gets` 호출 바로 다음 명령어에 브레이크포인트를 설정한다. 아래 `주소`는 `disas func` 출력에서 확인한 실제 명령어 주소로 바꿔야 한다.
 
@@ -105,7 +105,10 @@ run
 x/50wx $esp
 ```
 
-![](images/Pasted%20image%2020261021042528.png)
+![alt text](<images/BOF screenshot.png>)
+
+
+![alt text](images/Pasted%20image%2020261021042528.png)
 AAAA를 20개 넣은 결과
 
 - `x`: 메모리 확인
@@ -151,12 +154,12 @@ key 위치:      EBP + 0x08
 
 오프셋이 52바이트로 확인되었다면 페이로드는 다음과 같이 구성할 수 있다.
 
-![](images/Pasted%20image%2020261021042911.png)
+![alt text](images/Pasted%20image%2020261021042911.png)
 
 # 실행 결과
 
 Daddy_I_just_pwned_a_buff3r!
-![](images/Pasted%20image%2020261021044702.png)
+![alt text](images/Pasted%20image%2020261021044702.png)
 
 ## 배운 점
 
