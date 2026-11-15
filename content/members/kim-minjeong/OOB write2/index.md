@@ -28,9 +28,11 @@ JS 엔진은 속도를 이 객체는 이런 타입이다 가정하고 최정화�
 # 실제 V8은 타입 정보를 Map으로 관리하며 훨씬 복잡하다. 아래는 같은 메모리를 다른 타입으로 본다는 핵심만 단순화한 의사코드다
 
 // 실제 배열: 원소 하나가 4바이트 (압축 포인터 배열)
+
 uint32_t *real_buffer = malloc(10 * 4);           # 실제로는 40바이트
 
-// 그런데 엔진이 이 배열의 타입을 "8바이트 원소(double 배열)"로 착각
+// 그런데 엔진이 이 배열의 타입을 8바이트 원소(double 배열)로 착각
+
 double *confused_view = (double *)real_buffer;    # 1. 같은 메모리를 8바이트로 봄
 
 for (int i = 0; i < 10; i++)                      # 2. 10개가 안전하다고 믿고
@@ -51,7 +53,9 @@ for (int i = 0; i < 10; i++)                      # 2. 10개가 안전하다고 
 ![alt text](images/image-1.png)
 
 코드를 저장하고 ASan을 켜서 컴파일한 뒤 실행한다.
+
 gcc -g -fsanitize=address -o type_confusion type_confusion.c  # 빌드
+
 ./type_confusion                                              # 실행
 
 ![alt text](images/image-2.png)
@@ -79,10 +83,12 @@ JS 엔진은 같은 코드가 반복 실행되면 그것을 더 빠른 기계어
 # 실제 JIT 최적화는 훨씬 복잡한 조건으로 동작한다. 아래는 경계 검사가 제거된다는 핵심만 단순화한 의사코드다.
 
 // [최적화 전] 배열에 쓸 때마다 경계를 검사한다
+
 if (index < array->length)                     # 1. 경계 검사 — index가 범위 안인지 확인
     array->buffer[index] = value;              #    안전할 때만 쓴다
 
 // [최적화 후] JIT이 index는 늘 안전하다고 가정하고 1을 제거한다
+
 array->buffer[index] = value;                  # 2. 검사 없음! 가정이 틀리면 그대로 OOB write
 
 
